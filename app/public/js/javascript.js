@@ -9,14 +9,16 @@ function Productwatch(url, product) {
   this.url = url
   this.product = product
 
-
+  //setting time interval. If timelength is undefined then it will default to .5 sec
   this.Timeinterval = (productObj, timelength = 500) => {
     this.stopTime = setInterval(() => {
+      // check stock of item by calling callApi function
       callApi(productObj)
     }, timelength)
   }
 
   this.Stoptimeinterval = () => {
+    // allows to stop timeinterval for each specific object
     clearInterval(this.stopTime)
   }
 
@@ -28,7 +30,7 @@ let babyYoda = new Productwatch("https://www.costco.com/star-wars-the-mandaloria
 
 
 
-
+// set the timeinterval for each object
 daengShampoo.Timeinterval(daengShampoo)
 babyYoda.Timeinterval(babyYoda)
 
