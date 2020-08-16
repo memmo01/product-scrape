@@ -10,7 +10,7 @@ function Productwatch(url, product) {
   this.product = product
 
   //setting time interval. If timelength is undefined then it will default to .5 sec
-  this.Timeinterval = (productObj, timelength = 500) => {
+  this.Timeinterval = (productObj, timelength = 1000) => {
     this.stopTime = setInterval(() => {
       // check stock of item by calling callApi function
       callApi(productObj)
@@ -35,10 +35,9 @@ daengShampoo.Timeinterval(daengShampoo)
 babyYoda.Timeinterval(babyYoda)
 
 
-
+// runs the object through an ajax call to begin scraping the site to get product information
 function callApi(productItem) {
   let { product, url } = productItem
-
   $.ajax({ url: `/api/scrape/${product}`, method: "get" }).then((response) => {
     let responsedata = { product: `${product}`, data: response, url: url }
     assembleHTML(responsedata, productItem)
@@ -46,7 +45,7 @@ function callApi(productItem) {
 }
 
 
-
+// creates HTML to display results 
 
 function assembleHTML(responsedata, productItem) {
   let time = new Date()
@@ -76,18 +75,23 @@ function assembleHTML(responsedata, productItem) {
 
 
   if (stock !== "Out of Stock") {
+    // if item is in stock the stop timeinterval and change it to check every two hours. then send and email informing of the change of status
     productItem.Stoptimeinterval()
     productItem.Timeinterval(productItem, twohour)
     sendEmail(responsedata)
 
 
   } else {
+    console.log(productItem)
+    // if item is still not in stock check again in ten minutes
     productItem.Stoptimeinterval()
     productItem.Timeinterval(productItem, tenMin)
 
   }
 
 }
+
+//ajax call for sending email to inform of item being in stock
 function sendEmail(item) {
   $.ajax({
     url: "/api/sendemail",
